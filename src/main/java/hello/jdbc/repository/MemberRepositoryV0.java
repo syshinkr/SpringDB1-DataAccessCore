@@ -63,6 +63,46 @@ public class MemberRepositoryV0 {
         }
     }
 
+    public void update(String memberId, int money) throws SQLException {
+        String sql = "UPDATE member SET money=? WHERE member_id=?";
+
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+
+        try {
+            conn = getConnection();
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setInt(1, money);
+            pstmt.setString(2, memberId);
+            int resultSize = pstmt.executeUpdate();
+            log.info("resultSize={}", resultSize);
+        } catch (SQLException e) {
+            log.error("db error", e);
+            throw e;
+        } finally {
+            close(conn, pstmt, null);
+        }
+    }
+
+    public void delete(String memberId) throws SQLException {
+        String sql = "DELETE FROM member WHERE member_id=?";
+
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+
+        try {
+            conn = getConnection();
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, memberId);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            log.error("db error", e);
+            throw e;
+        } finally {
+            close(conn, pstmt, null);
+        }
+    }
+
     // close 중 에러 발생시 다음 객체 close 작업을 못하므로, 만드는 코드
     private void close(Connection conn, Statement stmt, ResultSet rs) {
         if (rs != null) {
